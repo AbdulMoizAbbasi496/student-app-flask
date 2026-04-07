@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  web-jenkins:
+    image: python:3.11-slim
+    working_dir: /app
+    volumes:
+      - .:/app
+    command: >
+      sh -c "pip install -r requirements.txt &&
+             python app.py"
+    ports:
+      - "8090:5000"
+    environment:
+      DB_USER: root
+      DB_PASSWORD: rootpassword
+      DB_HOST: db-jenkins
+      DB_NAME: studentdb
+    depends_on:
+      db-jenkins:
+        condition: service_healthy
+    restart: always
+
+  db-jenkins:
+    image: mysql:8.0
+    container_name: db-jenkins
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: studentdb
+    volumes:
+      - db_jenkins_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-prootpassword"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: always
+
+volumes:
+  db_jenkins_data:

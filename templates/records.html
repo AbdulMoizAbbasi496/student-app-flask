@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}Records{% endblock title %}
+{% block body %}
+
+       <div class="container my-3">
+        <h2>Candidates Enrolled</h2>
+              {% if allinfo|length==0 %}
+                <div class="alert alert-dark" role="alert">
+                  No Records found.
+                </div>
+              {% else %}
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">S.No</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Registration</th>
+                    <th scope="col">Department</th>
+                    <th scope="col">Time</th>
+                    <th scope="col">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+              
+              {% for Info in allinfo  %}
+              <tr>
+                <th scope="row">{{loop.index}}</th>
+                <td>{{Info.name}}</td>
+                <td>{{Info.reg}}</td>
+                <td>{{Info.dep}}</td>
+                <td>{{Info.date_created}}</td>
+                <td><a href="/delete/{{Info.sno}}" type="button" class="btn btn-outline-dark btn-sm mx-1">Delete</a></td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+             
+              {% endif %}
+              
+            
+      </div>
+{% endblock body %}
+ 
