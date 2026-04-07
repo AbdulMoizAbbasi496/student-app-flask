@@ -2,10 +2,10 @@ from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import os
+import time
 
 app = Flask(__name__)
 
-# Get database config from environment variables
 DB_USER = os.environ.get('DB_USER', 'root')
 DB_PASSWORD = os.environ.get('DB_PASSWORD', 'password')
 DB_HOST = os.environ.get('DB_HOST', 'db')
@@ -50,7 +50,14 @@ def records():
     return render_template('records.html', allinfo=allinfo)
 
 if __name__ == "__main__":
-    # Create tables if they don't exist
+    # Retry DB connection up to 10 times
     with app.app_context():
-        db.create_all()
+        for attempt in range(3):
+            try:
+                db.create_all()
+                print("Database connected and tables created!")
+                break
+            except Exception as e:
+                print(f"DB not ready (attempt {attempt+1}/10): {e}")
+                time.sleep(5)
     app.run(debug=False, host='0.0.0.0', port=5000)
